@@ -1,0 +1,26 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block title %}
+    Modifier une annonce - {{ parent() }}
+{% endblock %}
+
+{% block platform_body %}
+    <h2>Mofifier une annonce</h2>
+    {{ include('AppBundle:Advert:form.html.twig') }}
+
+    <p>
+        Vous éditez une annonce déjà existante, merci de ne pas changer
+        l'esprit général de l'annonce déjà publiée.
+    </p>
+    <p>
+        <a href="{{ path('platform_view', {'id': advert.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Retour à l'annonce
+        </a>
+    </p>
+    {#<div>#}
+        {#{% for message in app.session.flashbag.get('info') %}#}
+            {#<p>message flash: {{ message }}</p>#}
+        {#{% endfor %}#}
+    {#</div>#}
+{% endblock %}

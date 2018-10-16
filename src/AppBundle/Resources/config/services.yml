@@ -1,0 +1,12 @@
+# src/AppBundle/Resources/config/services.yml
+
+#parameters:
+#    mon_paramètre: ma_valeur
+
+services:
+    app.antispam:
+        class: AppBundle\Antispam\OCAntispam
+        arguments:
+            - "@mailer"
+            - "%locale%"
+            - 50

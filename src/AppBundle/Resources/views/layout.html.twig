@@ -1,0 +1,16 @@
+{% extends "::base.html.twig" %}
+
+    {% block title %}
+        Annonces - {{ parent() }}
+    {% endblock %}
+
+    {% block body %}
+        {#Ex.: Sous-titre commun à toutes les pages du bundle#}
+        <h1>Annonces</h1>
+        <hr>
+
+    {#!!!!!Nouveau bloc défini, que les vues du bundle pourront remplir #}
+        {% block platform_body %}
+        {% endblock %}
+
+    {% endblock %}
