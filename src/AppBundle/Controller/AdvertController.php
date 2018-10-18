@@ -26,41 +26,41 @@ class AdvertController extends Controller
         $listAdverts = array(
 
             array(
-
                 'title'   => 'Recherche développpeur Symfony',
-
                 'id'      => 1,
-
                 'author'  => 'Alexandre',
-
                 'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+                'date'    => new \Datetime()),
 
+            array(
+                'title'   => 'Mission dév Drupal 8',
+                'id'      => 2,
+                'author'  => 'Jeanne',
+                'content' => 'Une super boîte (Drup18) renforce ses équipes en compétence Drupal - Paris. Rejoignez-les…',
+                'date'    => new \Datetime()),
+
+            array(
+                'title'   => 'Recherche urgente débutant PHP/Symfony 3/4',
+                'id'      => 3,
+                'author'  => 'Fabien Potencier',
+                'content' => 'Sensiolabs manque de grands débutants Symfony ! Incroyable mais vrai ;)…',
                 'date'    => new \Datetime()),
 
             array(
 
                 'title'   => 'Mission de webmaster',
-
-                'id'      => 2,
-
+                'id'      => 4,
                 'author'  => 'Hugo',
-
                 'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-
                 'date'    => new \Datetime()),
 
             array(
 
                 'title'   => 'Offre de stage webdesigner',
-
-                'id'      => 3,
-
+                'id'      => 5,
                 'author'  => 'Mathieu',
-
                 'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-
                 'date'    => new \Datetime())
-
         );
 
         return $this->render('AppBundle:Advert:index.html.twig', array(
@@ -82,15 +82,10 @@ public function viewAction($id)
 {
 //        $tag = $request->query->get('tag');
     $advert = array(
-
         'title'   => 'Recherche développpeur Symfony2',
-
         'id'      => $id,
-
         'author'  => 'Alexandre',
-
         'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-
         'date'    => new \Datetime()
 
     );
@@ -123,7 +118,9 @@ public function viewAction($id)
         $antispam = $this->container->get('app.antispam');
 
         // $text contient le texte d'un message quelconque
-        $text = 'Texte de moins de 50 caractères --> spam';
+        $text = 'Texte de moins de 50 caractères --> spam
+        jdnjfdsjfnsdjffnsdjvndsjnvsv nfencecneunceunezvnzuvnzuvn ncuencuencuencuencuencencuec
+        kfdfndsnfjdsnflqf nfqlnflqnfqln';
         if ($antispam->isSpam($text)) {
             throw new \Exception('Votre message a été détecté comme spam !');
         }
@@ -152,15 +149,10 @@ public function viewAction($id)
             return $this->redirectToRoute('platform_view', array('id' =>$id));
         }
         $advert = array(
-
             'title'   => 'Recherche développpeur Symfony',
-
             'id'      => $id,
-
             'author'  => 'Alexandre',
-
             'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-
             'date'    => new \Datetime()
 
         );

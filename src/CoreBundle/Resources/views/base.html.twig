@@ -17,7 +17,7 @@
     <body>
         <div class="container">
             <div id="header" class="jumbotron">
-                <h1>Plateforme d'annonces</h1>
+                <h1>Site de troc, jobs, forum etc.</h1>
                 <p>
                     Ce projet est propulsé par Symfony,
                     et construit grâce au MOOC OpenClassrooms
@@ -32,9 +32,13 @@
 
             <div class="row">
                 <div id="menu" class="col-md-3">
+                    <ul>
+                        <li><a href="{{ path('core_homepage') }}">Accueil du site</a></li>
+                        <li><a href="{{ path('core_contact') }}">Contact</a></li>
+                    </ul>
                     <h3>Les annonces</h3>
                     <ul class="nav nav-pills nav-stacked">
-                        <li><a href="{{ path('platform_home') }}">Accueil</a></li>
+                        <li><a href="{{ path('platform_home') }}">Accueil des annonces</a></li>
                         <li><a href="{{ path('platform_add') }}">Ajouter une annonce</a></li>
                     </ul>
 
