@@ -43,7 +43,8 @@
                     </ul>
 
                     <h4>Dernières annonces</h4>
-                    {#Inclusion de controller avec render et non include#}
+                    {#Inclusion de controller avec render et non include,
+                    pour afficher les 3 dernières annonces du menu latéral --> voir C du AppBundle#}
                     {{ render(controller("AppBundle:Advert:menu", {'limit':3 })) }}
                 </div>
                 <div id="content" class="col-md-9">

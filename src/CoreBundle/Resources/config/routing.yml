@@ -8,6 +8,3 @@ core_contact:
     defaults:
         _controller: CoreBundle:Home:contact
 
-oc_platform:
-    resource: "@AppBundle/Resources/config/routing.yml"
-    prefix: /platform

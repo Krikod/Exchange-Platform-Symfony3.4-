@@ -7,6 +7,10 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 
+/**
+ * Class AppExtension
+ * @package AppBundle\DependencyInjection
+ */
 class AppExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)

@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use AppBundle\Entity\Advert;
+use AppBundle\Entity\Image;
+use AppBundle\Entity\Application;
 
 class AdvertController extends Controller
 {
@@ -78,21 +81,35 @@ class AdvertController extends Controller
 //        $tag = $request->query->get('tag');
 //        return new Response("L'id est " .$id. " et le tag est " .$tag);
 //    }
+
 public function viewAction($id)
 {
-//        $tag = $request->query->get('tag');
-    $advert = array(
-        'title'   => 'Recherche développpeur Symfony2',
-        'id'      => $id,
-        'author'  => 'Alexandre',
-        'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-        'date'    => new \Datetime()
+//    $repo = $this->getDoctrine()->getRepository(Advert::class);
+//    // QD on a l’O Repository, on a accès à diverses méthodes:
+//    $advert = $repo->find($id);
 
+//    $advert = $this->getDoctrine()
+//        ->getRepository('AppBundle:Advert')
+//        ->find($id);
+
+    $em = $this->getDoctrine()->getManager();
+    $advert = $em
+        ->getRepository('AppBundle:Advert')
+        ->find($id);
+
+    if (!$advert) {
+        throw $this->CreateNotFoundException("L'annonce d'id ".$id." n'existe pas.");
+    }
+
+    // On récupère la liste des candidatures de cette annonce
+    $listApplications = $em
+        ->getRepository('AppBundle:Application')
+        ->findBy(array('advert' => $advert));
+
+    return $this->render('AppBundle:Advert:view.html.twig', array(
+            'advert' => $advert,
+            'listApplications' => $listApplications)
     );
-        return $this->render(
-            'AppBundle:Advert:view.html.twig',
-            array('advert' => $advert)
-        );
 
 //    $url = $this->generateUrl('platform_home');
 //    return $this->redirectToRoute('platform_home');
@@ -109,45 +126,138 @@ public function viewAction($id)
 //    $session->set('user_id', 91);
 //    // On n'oublie pas de renvoyer une réponse
 //    return new Response("<body>Je suis une page de test, je n'ai rien à dire</body>");
-
 }
 
     public function addAction(Request $request)
-    {   // UTILISATION D'UN SERViCE ANTISPAM:
-        // On récupère le service
-        $antispam = $this->container->get('app.antispam');
+    {
+        // UTILISATION D'UN SERViCE ANTISPAM:
+        // On récupère le service (app.antispam depreciated !!!)
+//        $antispam = $this->container->get('app.antispam');
+//
+//        // $text contient le texte d'un message quelconque
+//        $text = 'Texte de moins de 50 caractères --> spam
+//        jdnjfdsjfnsdjffnsdjvndsjnvsv nfencecneunceunezvnzuvnzuvn ncuencuencuencuencuencencuec
+//        kfdfndsnfjdsnflqf nfqlnflqnfqln';
+//        if ($antispam->isSpam($text)) {
+//            throw new \Exception('Votre message a été détecté comme spam !');
+//        }
+// Ici message n'est pas un spam:
 
-        // $text contient le texte d'un message quelconque
-        $text = 'Texte de moins de 50 caractères --> spam
-        jdnjfdsjfnsdjffnsdjvndsjnvsv nfencecneunceunezvnzuvnzuvn ncuencuencuencuencuencencuec
-        kfdfndsnfjdsnflqf nfqlnflqnfqln';
-        if ($antispam->isSpam($text)) {
-            throw new \Exception('Votre message a été détecté comme spam !');
-        }
+        // CREATION ENTITE ADVERT
+        $advert = new Advert();
+        $advert->setTitle('Recherche développeur Symfony.');
+        $advert->setAuthor('Alexandre');
+        $advert->setContent('Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…');
 
-        // Ici message n'est pas un spam
+        $date = new \DateTime();
+        $date->setDate(2001, 2, 3);
+        $advert->setDate($date);
+        // On peut ne pas définir "publication": attributs définis autom. dans constructeur
 
+        // Création d'une première candidature
+        $application1 = new Application();
+        $application1->setAuthor('Marine');
+        $application1->setContent("J'ai toutes les qualités requises.");
+
+        // Création d'une deuxième candidature par exemple
+        $application2 = new Application();
+        $application2->setAuthor('Pierre');
+        $application2->setContent("Je suis très motivé.");
+
+        // On lie les candidatures à l'annonce
+        $application1->setAdvert($advert);
+        $application2->setAdvert($advert);
+
+        // CREATION ENTITE IMAGE
+        $image = new Image();
+        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+        $image->setAlt('Job de rêve');
+
+        // On lie l'image à l'annonce:
+        $advert->setImage($image);
+
+
+        // On récupère l'EntityManager
+        $em = $this->getDoctrine()->getManager();
+
+        // Étape 1 : On « persiste » l'entité
+        $em->persist($advert); // Cascade('persist') donc image aussi persistée.
+        // // Étape 1 ter : pour cette relation pas de cascade lorsqu'on persiste Advert, car la relation est
+        // définie dans l'entité Application et non Advert. On doit donc tout persister à la main ici.
+        $em->persist($application1);
+        $em->persist($application2);
+
+        // Étape 2 : On « FLUSH » tout ce qui a été persisté avant
+        $em->flush();
+
+        // Reste de la méthode qu'on avait déjà écrit
         if ($request->isMethod('POST')) {
-            $request->getSession()->getFlashBag->add('notice', 'Annonce bien enregistrée');
-            return $this->redirectToRoute('platform_view', array('id' =>5));
+            $request->getSession()->getFlashBag()->add('info', 'Annonce bien enregistrée.');
+            // Puis on redirige vers la page de visualisation de cettte annonce
+
+//            return $this->redirectToRoute('platform_view', array('id' =>5));
+            return $this->redirectToRoute('platform_view', array('id' => $advert->getId()));
         }
+        // Flashbag à effacer plus tard car ici pas POST
+        $session = $request->getSession();
+        $session->getFlashBag()->add('info', 'Annonce bien enregistrée.');
 
-        return $this->render('AppBundle:Advert:add.html.twig');
+        // Si on n'est pas en POST, on affiche le formulaire
+        return $this->render('AppBundle:Advert:add.html.twig', array('advert' => $advert));
+    }
 
-//        $session = $request->getSession();
-//        $session->getFlashBag()->add('info', 'Annonce bien enregistrée');
-//        $session->getFlashBag()->add('info', 'Oui, oui elle es enregistrée!');
+    // Méthode qui modifierait l'image déjà existante d'une annonce
+    public function editImageAction($advertId)
+    {
+        $em = $this->getDoctrine()->getManager();
 
+        $advert = $em->getRepository('AppBundle:Advert')
+            ->find($advertId);
+        $advert->getImage()->seturl('test.png');
+        $em->flush();
+
+        return new Response('OK');
     }
 
     public function editAction($id, Request $request)
     {
-//        Récupérer annonce
+        // LIER ANNONCE A CATEGORIES
+        $em = $this->getDoctrine()->getManager();
 
+        // On récupère l'annonce $id
+        $advert = $em
+            ->getRepository('AppBundle:Advert')
+            ->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+        }
+
+        // La méthode findAll() retourne ttes les CATEGORIES de la bdd
+        $listCategories = $em
+            ->getRepository('AppBundle:Category')
+            ->findAll();
+
+        // On BOUCLE sur les CATEGORIES pour les lier à l'annonce
+        // 2 lignes qui concernent le Many-To-Many:
+        foreach ($listCategories as $category) {
+            $advert->addCategory($category);
+        }
+
+        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+
+        // Etape 2: on déclenche l'enregistrement
+        $em->flush();
+
+        // RESTE DE LA METHODE:
+
+        // Récupérer annonce
         if ($request->isMethod('POST')) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée');
             return $this->redirectToRoute('platform_view', array('id' =>$id));
         }
+
         $advert = array(
             'title'   => 'Recherche développpeur Symfony',
             'id'      => $id,
@@ -156,11 +266,38 @@ public function viewAction($id)
             'date'    => new \Datetime()
 
         );
-        return $this->render('AppBundle:Advert:edit.html.twig', array('advert' =>$advert));
+        return $this->render('AppBundle:Advert:edit.html.twig', array(
+            'advert' =>$advert
+        ));
     }
 
     public function deleteAction($id)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        // DETACHEMENT DE L'ADVERT DES CATEGORIES
+        // On récupère l'annonce $id
+        $advert = $em
+            ->getRepository('AppBundle:Advert')
+            ->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException(
+                "L'annonce d'id ".$id." n'existe pas."
+            );
+        }
+
+        // On boucle sur les catégories de l'annonce pour les supprimer
+        foreach ($advert->getCategories() as $category) {
+            $advert->removeCategory($category);
+        }
+
+        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
+        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+
+        // On déclenche la modification
+        $em->flush();
+
         return $this->render('AppBundle:Advert:delete.html.twig');
     }
 
@@ -172,10 +309,12 @@ public function viewAction($id)
             array('id' => 9, 'title' => 'Offre stage etc.')
         );
         return $this->render('AppBundle:Advert:menu.html.twig', array(
+            // Tout l'intérêt est ici : le contrôleur passe les variables nécessaires au template !
             'listAdverts' => $listAdverts
             ));
     }
 
+//    Controlleur non utilisé
     public function viewSlugAction($year, $slug, $format)
     {
         return new Response(

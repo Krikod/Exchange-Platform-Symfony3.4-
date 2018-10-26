@@ -18,7 +18,7 @@ framework:
         strict_requirements: ~
     form: ~
     csrf_protection: ~
-#    validation: { enable_annotations: true }
+    validation: { enable_annotations: true }
     #serializer: { enable_annotations: true }
     default_locale: '%locale%'
     trusted_hosts: ~
@@ -38,8 +38,8 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
-#    globals:
-#        developer: "%app_developer%"
+    globals:
+        developer: "%app_developer%"
 
 # Doctrine Configuration
 doctrine:
@@ -50,7 +50,10 @@ doctrine:
         dbname: '%database_name%'
         user: '%database_user%'
         password: '%database_password%'
-        charset: UTF8
+        charset: utf8mb4
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: '%kernel.project_dir%/var/data/data.sqlite'

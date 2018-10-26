@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block platform_body %}
+
+    {% for message in app.session.flashbag.get('info') %}
+        <div class="alert alert-info">Message flash : {{ message }}</div>
+    {% endfor %}
+
     <h2>Ajouter une annonce</h2>
     {{ include('AppBundle:Advert:form.html.twig') }}
 
@@ -18,7 +23,7 @@
             Retour à la liste
         </a>
     </p>
-    {#<div>#}
+    {#<div> Si ajout échec et redirection vers add#}
     {#{% for message in app.session.flashbag.get('info') %}#}
     {#<p>message flash: {{ message }}</p>#}
     {#{% endfor %}#}
