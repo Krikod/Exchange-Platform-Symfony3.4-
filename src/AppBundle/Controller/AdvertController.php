@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use AppBundle\Entity\Advert;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Application;
+use AppBundle\Entity\AdvertSkill;
 
 class AdvertController extends Controller
 {
@@ -93,6 +94,8 @@ public function viewAction($id)
 //        ->find($id);
 
     $em = $this->getDoctrine()->getManager();
+
+    // On récupère l'annonce $id
     $advert = $em
         ->getRepository('AppBundle:Advert')
         ->find($id);
@@ -106,10 +109,16 @@ public function viewAction($id)
         ->getRepository('AppBundle:Application')
         ->findBy(array('advert' => $advert));
 
+    // On récupère la liste des AdvertSkill
+    $listAdvertSkills = $em
+        ->getRepository('AppBundle:AdvertSkill')
+        ->findBy(array('advert' => $advert));
+
     return $this->render('AppBundle:Advert:view.html.twig', array(
             'advert' => $advert,
-            'listApplications' => $listApplications)
-    );
+            'listApplications' => $listApplications,
+            'listAdvertSkills' => $listAdvertSkills
+        ));
 
 //    $url = $this->generateUrl('platform_home');
 //    return $this->redirectToRoute('platform_home');
@@ -143,16 +152,47 @@ public function viewAction($id)
 //        }
 // Ici message n'est pas un spam:
 
+        // On récupère l'EntityManager
+        $em = $this->getDoctrine()->getManager();
+
         // CREATION ENTITE ADVERT
         $advert = new Advert();
         $advert->setTitle('Recherche développeur Symfony.');
         $advert->setAuthor('Alexandre');
         $advert->setContent('Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…');
-
         $date = new \DateTime();
         $date->setDate(2001, 2, 3);
         $advert->setDate($date);
         // On peut ne pas définir "publication": attributs définis autom. dans constructeur
+
+        // On récupère toutes les compétences possibles
+        $listSkills = $em
+            ->getRepository('AppBundle:Skill')
+            ->findAll();
+
+        // Pour chaque compétence
+        foreach ($listSkills as $skill) {
+            // On crée une nouvelle "relation entre 1 annonce
+            // et 1 compétence"
+            $advertSkill = new AdvertSkill();
+
+            // On la lie à l'annonce qui est ici toujours la même
+            $advertSkill->setAdvert($advert);
+            // On la lie à la compétence, qui change ici dans la boucle
+            $advertSkill->setSkill($skill);
+
+            // Arbitrairement, on dit que chaque compétence est requise
+            // au niveau "Expert"
+            $advertSkill->setLevel('Expert');
+
+            // On persite cette entité de relation, propriétaire
+            // des 2 autres relations
+            $em->persist($advertSkill);
+        }
+        // Doctrine ne connait pas encore l'entité $advert.
+        // Si vous n'avez pas défini la relation AdvertSkill avec un cascade persist
+        // (ce qui est le cas si vous avez utilisé mon code), alors on doit persister $advert
+        // --> voir + bas le persist
 
         // Création d'une première candidature
         $application1 = new Application();
@@ -177,8 +217,7 @@ public function viewAction($id)
         $advert->setImage($image);
 
 
-        // On récupère l'EntityManager
-        $em = $this->getDoctrine()->getManager();
+
 
         // Étape 1 : On « persiste » l'entité
         $em->persist($advert); // Cascade('persist') donc image aussi persistée.
