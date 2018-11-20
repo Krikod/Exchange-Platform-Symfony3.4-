@@ -2,6 +2,9 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+
 /**
  * AdvertRepository
  *
@@ -10,4 +13,72 @@ namespace AppBundle\Repository;
  */
 class AdvertRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function myFindAll()
+    {
+        // METHODE 1: par l'EntityManager
+        // qb = queryBuilder
+        $qb = $this->_em->createQueryBuilder()
+            ->select('a')
+            ->from($this->_entityName, 'a');
+        // Dans un repo, $this->_entityName est
+        // le namespace de l'entité gérée.
+        // Ici: AppBundle\Entity\Advert
+
+        // METHODE 2: par le raccourci (recommandé)
+        $qb = $this->createQueryBuilder('a');
+        // (n'ajouter ni critère ni tri: construction req. finie)
+
+        // Récup. Query à partir du QB
+        $query = $qb->getQuery();
+
+        // Récup. résultats à partir de la Query
+        $results = $query->getResult();
+
+        // Retourner ces résultats
+        return $results;
+    }
+
+    public function myFind()
+    {
+        $qb = $this->createQueryBuilder('a');
+        // On peut ajouter ce qu'on veut avant
+        $qb
+            ->where('a.author = :author')
+            ->setParameter('author', 'Marine')
+        ;
+        // On applique notre condition sur le QueryBuilder
+        $this->whereCurrentYear($qb);
+        // On peut ajouter ce qu'on veut après
+        $qb->orderBy('a.date', 'DESC');
+        return $qb
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getAdvertWithCategories(array $categoryNames)
+    {
+        $qb = $this->createQueryBuilder('a')
+            // On fait jointure avec l'E Category (alias "c")
+            ->innerJoin('a.categories', 'c')
+            ->addSelect('c');
+
+        // Puis on filtre sur nom catégories (-> IN)
+        $qb->where($qb->expr()->in('c.name', $categoryNames));
+        // La syntaxe du IN et d'autres expressions
+        // se trouve dans la doc Doctrine
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
+
+    protected function whereCurrentYear(QueryBuilder $qb)
+    {
+        $qb
+            ->andWhere('a.date BETWEEN :start AND :end')
+            ->setParameter('start', new \DateTime(date('Y') . '-01-01')) // Date entre le 1er janvier de cette année
+            ->setParameter('end', new \DateTime(date('Y') . '-12-31')) // et le 31 décembre de cette année
+        ;
+    }
 }

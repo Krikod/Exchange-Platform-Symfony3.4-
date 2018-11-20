@@ -10,9 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AdvertRepository")
+ * ORM\HasLifecycleCallbacks()
  */
 class Advert
 {
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications; // "s" car une annonce liée à plrs candidatures
+
     /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category", cascade={"persist"})
      */
@@ -64,6 +70,11 @@ class Advert
      * @ORM\Column(name="published", type="boolean")
      */
     private $published = true;
+
+    /**
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
 
 
     /**
@@ -225,7 +236,8 @@ class Advert
     public function __construct()
     {
         $this->date = new \DateTime();
-        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->applications = new ArrayCollection();
     }
 
     /**
@@ -262,5 +274,52 @@ class Advert
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add application.
+     *
+     * @param \AppBundle\Entity\Application $application
+     *
+     * @return Advert
+     */
+    public function addApplication(\AppBundle\Entity\Application $application)
+    {
+        $this->applications[] = $application;
+
+        // On lie l'annonce à la candidature
+        $application->setAdvert($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove application.
+     *
+     * @param \AppBundle\Entity\Application $application
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeApplication(\AppBundle\Entity\Application $application)
+    {
+        return $this->applications->removeElement($application);
+    }
+
+    /**
+     * Get applications.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function updateDate()
+    {
+        $this->setUpdatedAt(new  \DateTime());
     }
 }

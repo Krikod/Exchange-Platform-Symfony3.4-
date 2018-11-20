@@ -6,6 +6,16 @@ platform_home:
     requirements:
         page: \d*
 
+platform_home_cand:
+    path: /cand
+    defaults:
+        _controller: AppBundle:Advert:indexAppli
+        page: 1
+    requirements:
+        page: \d*
+
+#platform_view_cand:
+
 platform_view:
     path: /advert/{id}
     defaults:

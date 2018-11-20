@@ -10,4 +10,21 @@ namespace AppBundle\Repository;
  */
 class ApplicationRepository extends \Doctrine\ORM\EntityRepository
 {
+    // Méth. pour récup. les X last cand. avec leur annonce associée
+    public function getApplicationsWithAdvert($limit)
+    {   // Param $limit est le nbre de cand. à retourner
+
+        // Jointure avec l'E Advert avec pour alias 'adv'
+        $qb = $this->createQueryBuilder('a')
+            // On fait jointure avec l'E Advert (alias "a")
+            ->innerJoin('a.advert', 'adv')
+            ->addSelect('adv');
+
+        // Puis on ne retourne que $limit résultats (fait dans TWIG)
+//        $qb->setMaxResults($limit);
+
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
 }

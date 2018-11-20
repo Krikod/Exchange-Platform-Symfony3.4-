@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,62 +16,53 @@ use AppBundle\Entity\AdvertSkill;
 
 class AdvertController extends Controller
 {
-
     public function indexAction($page)
     {
         if ($page < 1 ) {
-            throw new NotFoundHttpException('Page "' .$page.'" inexitante');
+            throw new NotFoundHttpException(
+                'Page "' .$page.'" inexitante');
         }
-//        $content = $this
-//            ->container
-//            ->get('templating')
-//            ->render('AppBundle:Advert:index.html.twig', array('nom' => 'winzou'));
-//        return new Response($content);
 
-        $listAdverts = array(
-
-            array(
-                'title'   => 'Recherche développpeur Symfony',
-                'id'      => 1,
-                'author'  => 'Alexandre',
-                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-                'date'    => new \Datetime()),
-
-            array(
-                'title'   => 'Mission dév Drupal 8',
-                'id'      => 2,
-                'author'  => 'Jeanne',
-                'content' => 'Une super boîte (Drup18) renforce ses équipes en compétence Drupal - Paris. Rejoignez-les…',
-                'date'    => new \Datetime()),
-
-            array(
-                'title'   => 'Recherche urgente débutant PHP/Symfony 3/4',
-                'id'      => 3,
-                'author'  => 'Fabien Potencier',
-                'content' => 'Sensiolabs manque de grands débutants Symfony ! Incroyable mais vrai ;)…',
-                'date'    => new \Datetime()),
-
-            array(
-
-                'title'   => 'Mission de webmaster',
-                'id'      => 4,
-                'author'  => 'Hugo',
-                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-                'date'    => new \Datetime()),
-
-            array(
-
-                'title'   => 'Offre de stage webdesigner',
-                'id'      => 5,
-                'author'  => 'Mathieu',
-                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-                'date'    => new \Datetime())
+        $categoryNames = array(
+            'Développement web',
+//            'Développement mobile',
+//            'Graphisme',
+//            'Intégration',
+            'Réseau'
         );
 
+        $repo = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('AppBundle:Advert');
+
+        $listAdverts = $repo->getAdvertWithCategories($categoryNames);
+
         return $this->render('AppBundle:Advert:index.html.twig', array(
-            'listAdverts' => $listAdverts
+            'listAdverts' => $listAdverts,
+            'categoryNames' => $categoryNames
         ));
     }
+
+    public function indexAppliAction($page)
+    {
+        $limit = 5;
+
+        if ($page < 1 ) {
+            throw new NotFoundHttpException(
+                'Page "' .$page.'" inexitante');
+        }
+
+        $repo = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('AppBundle:Application');
+
+        $listAppli = $repo->getApplicationsWithAdvert($limit);
+
+        return $this->render('AppBundle:Advert:indexAppli.html.twig', array(
+            'listAppli' => $listAppli,
+            'limit' => $limit
+        ));
+}
 
 //    public function viewAction($id, Request $request)
 //    {
@@ -86,7 +78,7 @@ class AdvertController extends Controller
 public function viewAction($id)
 {
 //    $repo = $this->getDoctrine()->getRepository(Advert::class);
-//    // QD on a l’O Repository, on a accès à diverses méthodes:
+//    // Qd on a l’O Repository, on a accès à diverses méthodes:
 //    $advert = $repo->find($id);
 
 //    $advert = $this->getDoctrine()
@@ -96,15 +88,16 @@ public function viewAction($id)
     $em = $this->getDoctrine()->getManager();
 
     // On récupère l'annonce $id
-    $advert = $em
-        ->getRepository('AppBundle:Advert')
-        ->find($id);
+    $advert = $em->getRepository('AppBundle:Advert')->find($id);
 
+    // $advert est donc une instance de AppBundle\Entity\Advert
+    // ou ! si $id n'existe pas, d'où ce if (null si on avait écrit
+    // if (null === $advert) - !advert conforme à la doc:
     if (!$advert) {
         throw $this->CreateNotFoundException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    // On récupère la liste des candidatures de cette annonce
+    // On récup. liste des cand. à cette annonce
     $listApplications = $em
         ->getRepository('AppBundle:Application')
         ->findBy(array('advert' => $advert));
@@ -118,7 +111,7 @@ public function viewAction($id)
             'advert' => $advert,
             'listApplications' => $listApplications,
             'listAdvertSkills' => $listAdvertSkills
-        ));
+    ));
 
 //    $url = $this->generateUrl('platform_home');
 //    return $this->redirectToRoute('platform_home');
@@ -172,7 +165,7 @@ public function viewAction($id)
 
         // Pour chaque compétence
         foreach ($listSkills as $skill) {
-            // On crée une nouvelle "relation entre 1 annonce
+            // On crée 1 nvelle "rel. entre 1 annonce
             // et 1 compétence"
             $advertSkill = new AdvertSkill();
 
@@ -185,21 +178,21 @@ public function viewAction($id)
             // au niveau "Expert"
             $advertSkill->setLevel('Expert');
 
-            // On persite cette entité de relation, propriétaire
+            // On persite cette entité de relation, proprio
             // des 2 autres relations
             $em->persist($advertSkill);
         }
-        // Doctrine ne connait pas encore l'entité $advert.
-        // Si vous n'avez pas défini la relation AdvertSkill avec un cascade persist
-        // (ce qui est le cas si vous avez utilisé mon code), alors on doit persister $advert
+        // Doctrine ne connait pas encore l'E $advert.
+        // Si on n'a pas défini la rel. AdvertSkill avec un cascade persist
+        // (ce qui est le cas si on a utilisé le code OCR), alors on doit persist $advert
         // --> voir + bas le persist
 
-        // Création d'une première candidature
+        // Création d'une 1ère candidature
         $application1 = new Application();
         $application1->setAuthor('Marine');
         $application1->setContent("J'ai toutes les qualités requises.");
 
-        // Création d'une deuxième candidature par exemple
+        // Création d'une 2e candidature par ex.
         $application2 = new Application();
         $application2->setAuthor('Pierre');
         $application2->setContent("Je suis très motivé.");
@@ -220,9 +213,9 @@ public function viewAction($id)
 
 
         // Étape 1 : On « persiste » l'entité
-        $em->persist($advert); // Cascade('persist') donc image aussi persistée.
-        // // Étape 1 ter : pour cette relation pas de cascade lorsqu'on persiste Advert, car la relation est
-        // définie dans l'entité Application et non Advert. On doit donc tout persister à la main ici.
+        $em->persist($advert); // cascade={'persist'} donc img aussi persistée (sinon persister mano)
+        // // Étape 1 bis : pour cette rel. pas de cascade qd on persist Advert, car la rel. est
+        // définie ds l'E Application et non Advert. On doit donc tout persister à la main ici.
         $em->persist($application1);
         $em->persist($application2);
 
@@ -245,7 +238,7 @@ public function viewAction($id)
         return $this->render('AppBundle:Advert:add.html.twig', array('advert' => $advert));
     }
 
-    // Méthode qui modifierait l'image déjà existante d'une annonce
+    // Méth. qui modifierait l'img déjà existante d'1 annonce
     public function editImageAction($advertId)
     {
         $em = $this->getDoctrine()->getManager();
@@ -264,27 +257,23 @@ public function viewAction($id)
         $em = $this->getDoctrine()->getManager();
 
         // On récupère l'annonce $id
-        $advert = $em
-            ->getRepository('AppBundle:Advert')
-            ->find($id);
+        $advert = $em->getRepository('AppBundle:Advert')->find($id);
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        // La méthode findAll() retourne ttes les CATEGORIES de la bdd
-        $listCategories = $em
-            ->getRepository('AppBundle:Category')
-            ->findAll();
+        // La méth. findAll() return ttes les CATEGORIES de la bdd
+        $listCategories = $em->getRepository('AppBundle:Category')->findAll();
 
-        // On BOUCLE sur les CATEGORIES pour les lier à l'annonce
+        // On BOUCLE sur les CATEG. pour les lier à l'annonce
         // 2 lignes qui concernent le Many-To-Many:
         foreach ($listCategories as $category) {
             $advert->addCategory($category);
         }
 
-        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+        // Pour persister le changt dans la rel., il faut persister l'E proprio
+        // Ici, Advert est le proprio, donc inutile de la persist car récupérée depuis Doctrine
 
         // Etape 2: on déclenche l'enregistrement
         $em->flush();
@@ -303,8 +292,10 @@ public function viewAction($id)
             'author'  => 'Alexandre',
             'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
             'date'    => new \Datetime()
-
         );
+        $advert->updateDate();
+
+
         return $this->render('AppBundle:Advert:edit.html.twig', array(
             'advert' =>$advert
         ));
@@ -316,9 +307,7 @@ public function viewAction($id)
 
         // DETACHEMENT DE L'ADVERT DES CATEGORIES
         // On récupère l'annonce $id
-        $advert = $em
-            ->getRepository('AppBundle:Advert')
-            ->find($id);
+        $advert = $em->getRepository('AppBundle:Advert')->find($id);
 
         if (null === $advert) {
             throw new NotFoundHttpException(
@@ -331,8 +320,8 @@ public function viewAction($id)
             $advert->removeCategory($category);
         }
 
-        // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-        // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
+        // Pour persister le changement dans la rel., il faut persister l'E proprio
+        // Ici, Advert est le proprio, donc inutile de la persist car on l'a récupérée depuis D.
 
         // On déclenche la modification
         $em->flush();
@@ -348,12 +337,12 @@ public function viewAction($id)
             array('id' => 9, 'title' => 'Offre stage etc.')
         );
         return $this->render('AppBundle:Advert:menu.html.twig', array(
-            // Tout l'intérêt est ici : le contrôleur passe les variables nécessaires au template !
+            // Tout l'intérêt est ici : le C passe les variables nécessaires au template !
             'listAdverts' => $listAdverts
             ));
     }
 
-//    Controlleur non utilisé
+//    Meth. non utilisée
     public function viewSlugAction($year, $slug, $format)
     {
         return new Response(
@@ -362,3 +351,53 @@ public function viewAction($id)
         );
     }
 }
+
+/* Pour indexAction:
+
+$content = $this
+//            ->container
+//            ->get('templating')
+//            ->render('AppBundle:Advert:index.html.twig', array('nom' => 'winzou'));
+//        return new Response($content);
+
+
+// Liste d'annonces en dur pour indexAction():
+ $listAdverts = array(
+//            array(
+//                'title'   => 'Recherche développpeur Symfony',
+//                'id'      => 1,
+//                'author'  => 'Alexandre',
+//                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+//                'date'    => new \Datetime()),
+//
+//            array(
+//                'title'   => 'Mission dév Drupal 8',
+//                'id'      => 2,
+//                'author'  => 'Jeanne',
+//                'content' => 'Une super boîte (Drup18) renforce ses équipes en compétence Drupal - Paris. Rejoignez-les…',
+//                'date'    => new \Datetime()),
+//
+//            array(
+//                'title'   => 'Recherche urgente débutant PHP/Symfony 3/4',
+//                'id'      => 3,
+//                'author'  => 'Fabien Potencier',
+//                'content' => 'Sensiolabs manque de grands débutants Symfony ! Incroyable mais vrai ;)…',
+//                'date'    => new \Datetime()),
+//
+//            array(
+//
+//                'title'   => 'Mission de webmaster',
+//                'id'      => 4,
+//                'author'  => 'Hugo',
+//                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
+//                'date'    => new \Datetime()),
+//
+//            array(
+//
+//                'title'   => 'Offre de stage webdesigner',
+//                'id'      => 5,
+//                'author'  => 'Mathieu',
+//                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+//                'date'    => new \Datetime())
+//        );
+ */

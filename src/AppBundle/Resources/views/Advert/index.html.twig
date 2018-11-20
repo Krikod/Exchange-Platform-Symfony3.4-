@@ -15,12 +15,16 @@
             par {{ advert.author }},
             le {{ advert.date|date('d/m/Y') }}
         </li>
-
+        {% if not advert.categories.empty %}
+            <p>
+                Annonce parue dans la/les catégorie(s) suivante(s):
+                {% for category in advert.categories %}
+                    {{ category.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
         {% else %}
         <li>Pas encore d'annonces</li>
     {% endfor %}
 </ul>
-
 {% endblock %}
-
-

@@ -20,13 +20,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         // Liste des noms de catégorie à ajouter
-        $names = array(
-            'Développement web',
-            'Développement mobile',
-            'Graphisme',
-            'Intégration',
-            'Réseau'
-        );
+        $names = array('Développement web', 'Développement mobile', 'Graphisme', 'Intégration', 'Réseau');
 
         // create 20 products! Bam!
 //        for ($i = 0; $i < 20; $i++) {

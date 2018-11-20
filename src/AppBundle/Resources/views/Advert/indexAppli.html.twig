@@ -1,0 +1,25 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block title %}
+    Accueil - {{ parent() }}
+{% endblock %}
+
+{% block platform_body %}
+    <h2>Liste des {{ limit }} dernières candidatures, avec leur annonce associée</h2>
+    <ul>
+        {% for appli in listAppli|slice(0,limit) %}
+            <li>
+                {#<a href="{{ path('', {'id':appli.id}) }}">#}
+                   Candidature n°{{ appli.id }}
+                {#</a>#}
+                par {{ appli.author }},
+                le {{ appli.date|date('d/m/Y') }},
+                pour l'annonce
+                 <a href="{{ path('platform_view', {'id':appli.advert.id}) }}">
+                    <strong>{{ appli.advert.title }}</strong></a>:
+                <br>
+                {{ appli.content }}
+            </li>
+        {% endfor %}
+</ul>
+{% endblock %}
