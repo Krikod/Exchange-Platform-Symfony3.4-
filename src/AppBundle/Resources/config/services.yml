@@ -10,3 +10,8 @@ services:
             - "@mailer"
             - "%locale%"
             - 50
+
+    app.oc_platform.purger.advert:
+        class: AppBundle\Purger\OCPlatformPurgerAdvert
+        arguments:
+            - 20

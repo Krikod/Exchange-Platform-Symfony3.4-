@@ -133,16 +133,16 @@ public function viewAction($id)
     public function addAction(Request $request)
     {
         // UTILISATION D'UN SERViCE ANTISPAM:
-        // On récupère le service (app.antispam depreciated !!!)
-//        $antispam = $this->container->get('app.antispam');
-//
-//        // $text contient le texte d'un message quelconque
-//        $text = 'Texte de moins de 50 caractères --> spam
-//        jdnjfdsjfnsdjffnsdjvndsjnvsv nfencecneunceunezvnzuvnzuvn ncuencuencuencuencuencencuec
-//        kfdfndsnfjdsnflqf nfqlnflqnfqln';
-//        if ($antispam->isSpam($text)) {
-//            throw new \Exception('Votre message a été détecté comme spam !');
-//        }
+        // On récup serv (app.antispam depreciated !!!)
+        $antispam = $this->container->get('app.antispam');
+
+        // $text contient texte d'un message quelconque
+        $text = 'Texte de moins de 50 caractères est un spam. Donc pas spam:
+        jdnjfdsjfnsdjffnsdjvndsjnvsv nfencecneunceunezvnzuvnzuvn ncuencuencuencuencuencencuec
+        kfdfndsnfjdsnflqf nfqlnflqnfqln';
+        if ($antispam->isSpam($text)) {
+            throw new \Exception('Votre message a été détecté comme spam !');
+        }
 // Ici message n'est pas un spam:
 
         // On récupère l'EntityManager
@@ -340,6 +340,11 @@ public function viewAction($id)
             // Tout l'intérêt est ici : le C passe les variables nécessaires au template !
             'listAdverts' => $listAdverts
             ));
+    }
+
+    public function purge($days)
+    {
+
     }
 
 //    Meth. non utilisée

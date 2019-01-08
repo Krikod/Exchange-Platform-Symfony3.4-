@@ -81,4 +81,32 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('end', new \DateTime(date('Y') . '-12-31')) // et le 31 décembre de cette année
         ;
     }
+
+
+
+
+    
+    public function getAndDeleteAdvertsNoCandsXDays($days)
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb
+            ->delete('a')
+            ->where(!'a.applications')
+            ->andWhere('\Datetime(Now) - a.updatedAt > :days')
+        ;
+        // On applique condition sur le QueryBuilder
+        $this->getAndDeleteAdvertsNoCandsXDays($qb);
+        // On peut ajouter ce qu'on veut après
+//        SUPPRIMER CES ADVERTS !!!!!!!!!!!!!
+//        $qb->orderBy('a.date', 'DESC');
+        return $qb
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+//    protected function getAdvertsNoCandsXDays($days)
+//    {
+//
+//    }
 }
