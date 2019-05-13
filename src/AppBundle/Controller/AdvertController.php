@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\AdvertType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -146,7 +147,7 @@ public function viewAction($id)
 
         // Val par défaut: on préremplit par ex avec date d'aujourd'hui
         // ==> date sera préaffichée dans le form
-        $advert->setDate(new \DateTime());
+//        $advert->setDate(new \DateTime());
 
         // On crée le FormBuilder grâce au service form factory
 //        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
@@ -154,32 +155,34 @@ public function viewAction($id)
         // On ajoute les champs de l'entité que l'on veut à notre formulaire
 //        $formBuilder
         // raccourci:
-        $form =
-            $this->get('form.factory')->createBuilder(FormType::class, $advert)
-            ->add('date', DateType::class)
-            ->add('title', TextType::class)
-            ->add('content', TextareaType::class)
-            ->add('author', TextType::class)
-            // Save bdd et non publié -> y revenir
-                ->add('published', CheckboxType::class, array(
-                'required' => false
-            ))
-            ->add('save', SubmitType::class)
-            ->getForm()
-            ;
+//        $form =
+//            $this->get('form.factory')->createBuilder(FormType::class, $advert)
+//            ->add('date', DateType::class)
+//            ->add('title', TextType::class)
+//            ->add('content', TextareaType::class)
+//            ->add('author', TextType::class)
+//            // Save bdd et non publié -> y revenir
+//                ->add('published', CheckboxType::class, array(
+//                'required' => false
+//            ))
+//            ->add('save', SubmitType::class)
+//            ->getForm()
+//            ;
 
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
+//        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
+        $form = $this->createForm(AdvertType::class, $advert);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($advert);
                 $em->flush();
-                $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée');
+
+                $request->getSession()->getFlashBag()
+                    ->add('info', 'Annonce bien enregistrée');
 
                 return $this->redirectToRoute('platform_view', array(
                     'id' => $advert->getId()
                 ));
-            }
         }
 
         // On passe la méthode createView() du formulaire à la vue
