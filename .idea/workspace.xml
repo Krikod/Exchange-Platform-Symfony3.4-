@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="147715ea-cfff-4d1f-a6c3-83b66aa3286a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/config.yml" afterPath="$PROJECT_DIR$/app/config/config.yml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/AdvertController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/AdvertController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Entity/Advert.php" afterPath="$PROJECT_DIR$/src/AppBundle/Entity/Advert.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Resources/views/Advert/form.html.twig" afterPath="$PROJECT_DIR$/src/AppBundle/Resources/views/Advert/form.html.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Resources/views/Advert/view.html.twig" afterPath="$PROJECT_DIR$/src/AppBundle/Resources/views/Advert/view.html.twig" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,18 +18,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AdvertController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AdvertController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AdvertController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="161" column="12" lean-forward="false" selection-start-line="161" selection-start-column="12" selection-end-line="161" selection-end-column="12" />
+            <state relative-caret-position="16">
+              <caret line="331" column="32" lean-forward="true" selection-start-line="331" selection-start-column="32" selection-end-line="331" selection-end-column="32" />
               <folding>
                 <element signature="e#40#99#0#PHP" expanded="true" />
-                <element signature="e#6231#6263#0#PHP" expanded="true" />
-                <marker date="1557750989195" expanded="false" signature="7596:7611" ph="Skill" />
-                <marker date="1557750989195" expanded="false" signature="10339:10352" ph="/advert/{id}" />
-                <marker date="1557750989195" expanded="false" signature="10666:10696" ph="App:Advert:add" />
+                <element signature="e#6469#6501#0#PHP" expanded="true" />
+                <marker date="1557751878785" expanded="false" signature="7834:7849" ph="Skill" />
+                <marker date="1557751878785" expanded="false" signature="10577:10590" ph="/advert/{id}" />
+                <marker date="1557751878785" expanded="false" signature="10904:10934" ph="App:Advert:add" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.yml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/config/config.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="43" column="40" lean-forward="false" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -123,7 +128,6 @@
         <option value="$PROJECT_DIR$/src/AppBundle/Resources/views/Application/view.html.twig" />
         <option value="$PROJECT_DIR$/src/AppBundle/Email/ApplicationMailer.php" />
         <option value="$PROJECT_DIR$/src/AppBundle/DoctrineListener/ApplicationCreationListener.php" />
-        <option value="$PROJECT_DIR$/app/config/config.yml" />
         <option value="$PROJECT_DIR$/src/AppBundle/Entity/Test.php" />
         <option value="$PROJECT_DIR$/src/AppBundle/Entity/Image.php" />
         <option value="$PROJECT_DIR$/src/AppBundle/Entity/Application.php" />
@@ -149,6 +153,7 @@
         <option value="$PROJECT_DIR$/src/AppBundle/Resources/views/Advert/view.html.twig" />
         <option value="$PROJECT_DIR$/src/AppBundle/Entity/Advert.php" />
         <option value="$PROJECT_DIR$/src/AppBundle/Controller/AdvertController.php" />
+        <option value="$PROJECT_DIR$/app/config/config.yml" />
       </list>
     </option>
   </component>
@@ -245,6 +250,12 @@
               <item name="Exchange_platform_Sf_3.4" type="b2602c69:ProjectViewProjectNode" />
               <item name="Exchange_platform_Sf_3.4" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="Exchange_platform_Sf_3.4" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Exchange_platform_Sf_3.4" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="config" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="Exchange_platform_Sf_3.4" type="b2602c69:ProjectViewProjectNode" />
@@ -391,18 +402,18 @@
       <workItem from="1544693855070" duration="3467000" />
       <workItem from="1545130297642" duration="8417000" />
       <workItem from="1546961435442" duration="17455000" />
-      <workItem from="1557737857551" duration="5795000" />
+      <workItem from="1557737857551" duration="7345000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="338484000" />
+    <option name="totallyTimeSpent" value="340034000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="105" y="201" width="1038" height="997" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30040324" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22278225" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328341" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -539,13 +550,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/config/config.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-686">
-          <caret line="0" column="8" lean-forward="false" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/config/services.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -654,6 +658,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="2" column="19" lean-forward="false" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -780,15 +785,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AdvertController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="161" column="12" lean-forward="false" selection-start-line="161" selection-start-column="12" selection-end-line="161" selection-end-column="12" />
+        <state relative-caret-position="16">
+          <caret line="331" column="32" lean-forward="true" selection-start-line="331" selection-start-column="32" selection-end-line="331" selection-end-column="32" />
           <folding>
             <element signature="e#40#99#0#PHP" expanded="true" />
-            <element signature="e#6231#6263#0#PHP" expanded="true" />
-            <marker date="1557750989195" expanded="false" signature="7596:7611" ph="Skill" />
-            <marker date="1557750989195" expanded="false" signature="10339:10352" ph="/advert/{id}" />
-            <marker date="1557750989195" expanded="false" signature="10666:10696" ph="App:Advert:add" />
+            <element signature="e#6469#6501#0#PHP" expanded="true" />
+            <marker date="1557751878785" expanded="false" signature="7834:7849" ph="Skill" />
+            <marker date="1557751878785" expanded="false" signature="10577:10590" ph="/advert/{id}" />
+            <marker date="1557751878785" expanded="false" signature="10904:10934" ph="App:Advert:add" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/config/config.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="43" column="40" lean-forward="false" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>

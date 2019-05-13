@@ -141,8 +141,12 @@ public function viewAction($id)
     {
 //        Création du form
 
-        // Création de l'O Advert
+        // Création de l'O Advert (nvelle annonce)
         $advert = new Advert();
+
+        // Val par défaut: on préremplit par ex avec date d'aujourd'hui
+        // ==> date sera préaffichée dans le form
+        $advert->setDate(new \DateTime());
 
         // On crée le FormBuilder grâce au service form factory
 //        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
@@ -156,7 +160,8 @@ public function viewAction($id)
             ->add('title', TextType::class)
             ->add('content', TextareaType::class)
             ->add('author', TextType::class)
-            ->add('published', CheckboxType::class, array(
+            // Save bdd et non publié -> y revenir
+                ->add('published', CheckboxType::class, array(
                 'required' => false
             ))
             ->add('save', SubmitType::class)
