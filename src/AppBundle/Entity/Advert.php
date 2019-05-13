@@ -74,7 +74,7 @@ class Advert
     /**
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
-    private $updatedAt;
+    private $updateDate;
 
 
     /**
@@ -320,6 +320,6 @@ class Advert
      */
     public function updateDate()
     {
-        $this->setUpdatedAt(new  \DateTime());
+        return $this->setUpdateDate = new  \DateTime();
     }
 }

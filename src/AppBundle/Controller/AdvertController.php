@@ -4,6 +4,12 @@ namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +19,7 @@ use AppBundle\Entity\Advert;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Application;
 use AppBundle\Entity\AdvertSkill;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class AdvertController extends Controller
 {
@@ -132,6 +139,51 @@ public function viewAction($id)
 
     public function addAction(Request $request)
     {
+//        Création du form
+
+        // Création de l'O Advert
+        $advert = new Advert();
+
+        // On crée le FormBuilder grâce au service form factory
+//        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
+
+        // On ajoute les champs de l'entité que l'on veut à notre formulaire
+//        $formBuilder
+        // raccourci:
+        $form =
+            $this->get('form.factory')->createBuilder(FormType::class, $advert)
+            ->add('date', DateType::class)
+            ->add('title', TextType::class)
+            ->add('content', TextareaType::class)
+            ->add('author', TextType::class)
+            ->add('published', CheckboxType::class, array(
+                'required' => false
+            ))
+            ->add('save', SubmitType::class)
+            ->getForm()
+            ;
+
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($advert);
+                $em->flush();
+                $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée');
+
+                return $this->redirectToRoute('platform_view', array(
+                    'id' => $advert->getId()
+                ));
+            }
+        }
+
+        // On passe la méthode createView() du formulaire à la vue
+        // afin qu'elle puisse afficher le formulaire toute seule
+        return $this->render('AppBundle:Advert:add.html.twig', array(
+            'form' => $form->createView(),
+        ));
+
+        /*
         // UTILISATION D'UN SERViCE ANTISPAM:
         // On récup serv (app.antispam depreciated !!!)
         $antispam = $this->container->get('app.antispam');
@@ -210,8 +262,6 @@ public function viewAction($id)
         $advert->setImage($image);
 
 
-
-
         // Étape 1 : On « persiste » l'entité
         $em->persist($advert); // cascade={'persist'} donc img aussi persistée (sinon persister mano)
         // // Étape 1 bis : pour cette rel. pas de cascade qd on persist Advert, car la rel. est
@@ -236,6 +286,7 @@ public function viewAction($id)
 
         // Si on n'est pas en POST, on affiche le formulaire
         return $this->render('AppBundle:Advert:add.html.twig', array('advert' => $advert));
+        */
     }
 
     // Méth. qui modifierait l'img déjà existante d'1 annonce
