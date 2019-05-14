@@ -140,36 +140,8 @@ public function viewAction($id)
 
     public function addAction(Request $request)
     {
-//        Création du form
-
-        // Création de l'O Advert (nvelle annonce)
         $advert = new Advert();
 
-        // Val par défaut: on préremplit par ex avec date d'aujourd'hui
-        // ==> date sera préaffichée dans le form
-//        $advert->setDate(new \DateTime());
-
-        // On crée le FormBuilder grâce au service form factory
-//        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
-
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-//        $formBuilder
-        // raccourci:
-//        $form =
-//            $this->get('form.factory')->createBuilder(FormType::class, $advert)
-//            ->add('date', DateType::class)
-//            ->add('title', TextType::class)
-//            ->add('content', TextareaType::class)
-//            ->add('author', TextType::class)
-//            // Save bdd et non publié -> y revenir
-//                ->add('published', CheckboxType::class, array(
-//                'required' => false
-//            ))
-//            ->add('save', SubmitType::class)
-//            ->getForm()
-//            ;
-
-//        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
         $form = $this->createForm(AdvertType::class, $advert);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -177,16 +149,17 @@ public function viewAction($id)
                 $em->persist($advert);
                 $em->flush();
 
-                $request->getSession()->getFlashBag()
-                    ->add('info', 'Annonce bien enregistrée');
-
+                $this->addFlash('info', 'Annonce bien enregistrée');
+                // Ds la vue -->
+            //          {% for message in app.session.flashbag.get('info') %}
+            //             <div class="alert alert-info">{{ message }}</div>
+            //          {% endfor %}
                 return $this->redirectToRoute('platform_view', array(
                     'id' => $advert->getId()
                 ));
         }
 
-        // On passe la méthode createView() du formulaire à la vue
-        // afin qu'elle puisse afficher le formulaire toute seule
+        // On passe méthode createView() du formulaire à la vue
         return $this->render('AppBundle:Advert:add.html.twig', array(
             'form' => $form->createView(),
         ));
